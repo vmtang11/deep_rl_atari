@@ -3,7 +3,7 @@ import torch as T
 from deep_q_network import DeepQNetwork
 from replay_memory import ReplayBuffer
 
-class DQNAgent():
+class DQNAgent(object):
     def __init__(self, gamma, epsilon, lr, n_actions, input_dims, mem_size, batch_size, 
                  eps_min = .01, eps_dec = 5e-7, replace = 1000, algo = None, 
                  env_name = None, chkpt_dir = 'tmp/dqn'):
@@ -38,7 +38,7 @@ class DQNAgent():
     def choose_action(self, observation):
         # epsilon greedy
         if np.random.random() > self.epsilon:
-            state = T.tensor([observation], dtype = T.float.to(self.q_eval.device))
+            state = T.tensor([observation], dtype = T.float).to(self.q_eval.device)
             actions = self.q_eval.forward(state)
             action = T.argmax(actions).item()
         else:
