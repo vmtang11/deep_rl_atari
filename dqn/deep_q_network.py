@@ -18,7 +18,7 @@ class DeepQNetwork(nn.Module):
         fc_input_dims = self.calculate_conv_output_dims(input_dims)
         
         self.fc1 = nn.Linear(fc_input_dims, 512)
-        self.fc2 = nn.Linear(512, self.n_actions)
+        self.fc2 = nn.Linear(512, n_actions)
         
         self.optimizer = optim.RMSprop(self.parameters(), lr = lr)
         self.loss = nn.MSELoss()

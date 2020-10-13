@@ -1,8 +1,8 @@
 import collections
 import cv2
-
 import matplotlib.pyplot as plt
 import numpy as np
+import gym
 
 def plot_learning_curve(x, scores, epsilons, filename):
     fig = plt.figure()
