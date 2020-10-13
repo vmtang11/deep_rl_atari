@@ -37,7 +37,7 @@ class DQNAgent():
         
     def choose_action(self, observation):
         # epsilon greedy
-        if np.random.randint() > self.epsilon:
+        if np.random.random() > self.epsilon:
             state = T.tensor([observation], dtype = T.float.to(self.q_eval.device))
             actions = self.q_eval.forward(state)
             action = T.argmax(actions).item()
@@ -46,17 +46,17 @@ class DQNAgent():
         
         return action
     
-    def store_transitions(self, state, action, reward, state_, done):
-        self.memory.store_transitions(state, action, reward, state_, done)
+    def store_transition(self, state, action, reward, state_, done):
+        self.memory.store_transition(state, action, reward, state_, done)
         
     def sample_memory(self):
-        state, action, reward, state_, done = self.memory.sample_buffer(self.batch_size)
+        state, action, reward, new_state, done = self.memory.sample_buffer(self.batch_size)
         
         states = T.tensor(state).to(self.q_eval.device)
-        actions = T.tensor(actions).to(self.q_eval.device)
-        rewards = T.tensor(rewards).to(self.q_eval.device)
-        states_ = T.tensor(states_).to(self.q_eval.device)
-        dones = T.tensor(dones).to(self.q_eval.device)
+        actions = T.tensor(action).to(self.q_eval.device)
+        rewards = T.tensor(reward).to(self.q_eval.device)
+        states_ = T.tensor(new_state).to(self.q_eval.device)
+        dones = T.tensor(done).to(self.q_eval.device)
         
         return states, actions, rewards, states_, dones
     

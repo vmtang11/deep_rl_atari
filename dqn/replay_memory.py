@@ -1,6 +1,6 @@
 import numpy as np
 
-class ReplayBuffer():
+class ReplayBuffer(object):
     def __init__(self, max_size, input_shape, n_actions):
         self.mem_size = max_size
         self.mem_cntr = 0
@@ -8,7 +8,7 @@ class ReplayBuffer():
         self.new_state_memory = np.zeros((self.mem_size, *input_shape), dtype = np.float32)
         self.action_memory = np.zeros(self.mem_size, dtype = np.int64)
         self.reward_memory = np.zeros(self.mem_size, dtype = np.float32)
-        self.terminal_memory = np.zeros(self.mem_size, dtype = np.uint8)
+        self.terminal_memory = np.zeros(self.mem_size, dtype = np.bool)
         
     def store_transition(self, state, action, reward, state_, done):
         # store memories in position of first unoccupied memory
@@ -27,7 +27,7 @@ class ReplayBuffer():
         # position of last stored memory
         max_mem = min(self.mem_cntr, self.mem_size)
         # uniformly sample memory, without repeats
-        batch = np.random.choise(max_mem, batch_size, replace = False)
+        batch = np.random.choice(max_mem, batch_size, replace = False)
         
         states = self.state_memory[batch]
         actions = self.action_memory[batch]
