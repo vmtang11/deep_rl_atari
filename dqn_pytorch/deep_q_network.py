@@ -6,7 +6,19 @@ import torch.optim as optim
 import numpy as np
 
 class DeepQNetwork(nn.Module):
+    '''
+    Creates the deep q network and saves/loads checkpoints.
+    '''
     def __init__(self, lr, n_actions, name, input_dims, chkpt_dir):
+        '''
+        Initializes the Deep Q Network with 3 convolutional layers and 2 fully connected layers.
+        
+        INPUTS: lr: learning rate
+                n_actions: number of actions that can be taken
+                name: name for checkpoint file
+                input_dims: size of input
+                chkpt_dir: directory to put checkpoints
+        '''
         super(DeepQNetwork, self).__init__()
         self.checkpoint_dir = chkpt_dir
         self.checkpoint_file = os.path.join(self.checkpoint_dir, name)
@@ -27,6 +39,12 @@ class DeepQNetwork(nn.Module):
         self.to(self.device)
         
     def calculate_conv_output_dims(self, input_dims):
+        '''
+        Calculates output dimensions from convolutional layers so that any input size can be used.
+        
+        INPUT: input_dims: size of input
+        OUTPUT: dimensions of output from convolutional layers
+        '''
         state = T.zeros(1, *input_dims)
         dims = self.conv1(state)
         dims = self.conv2(dims)
@@ -34,6 +52,12 @@ class DeepQNetwork(nn.Module):
         return int(np.prod(dims.size()))  # returns dim of output conv layer. This is to generalise to any input feature size and not hard code
     
     def forward(self, state):
+        '''
+        Forward propagates current state through DQN. 
+        
+        INPUT: state: current state
+        OUTPUT: actions: actions resulting from current state 
+        '''
         conv1 = F.relu(self.conv1(state))  # pass state through first conv layer and activate using ReLU
         conv2 = F.relu(self.conv2(conv1))
         conv3 = F.relu(self.conv3(conv2))
@@ -46,9 +70,15 @@ class DeepQNetwork(nn.Module):
         return actions
     
     def save_checkpoint(self):
+        '''
+        Saves checkpoint.
+        '''
         print('... saving checkpoint ...')
         T.save(self.state_dict(), self.checkpoint_file)
         
     def load_checkpoint(self):
+        '''
+        Loads checkpoint.
+        '''
         print('... loading checkpoint ...')
         self.load_state_dict(T.load(self.checkpoint_file))
