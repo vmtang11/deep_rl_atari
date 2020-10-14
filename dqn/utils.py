@@ -78,21 +78,29 @@ class RepeatActionAndMaxFrame(gym.Wrapper):
         return obs
     
 class PreprocessFrame(gym.ObservationWrapper):
+    '''
+        This class preprocess the frame before feeding it into the neural network. The paper used images of 84X84X4.
+        The 4 comes from the stacking and this happens in the StackFrames class.
+        We also rescale the frame and do necessary array reshaping to make it ready for pyTorch nn.
+    '''
     def __init__(self, shape, env = None):
         super(PreprocessFrame, self).__init__(env)
-        # openAI returns channels last but pytorch wants channels first
-        self.shape = (shape[2], shape[0], shape[1])
+        self.shape = (shape[2], shape[0], shape[1])    # openAI returns channels last but pytorch wants channels first
         self.observation_space = gym.spaces.Box(low = 0.0, high = 1.0, shape = self.shape, dtype = np.float32)
         
     def observation(self, obs):
-        new_frame = cv2.cvtColor(obs, cv2.COLOR_RGB2GRAY)
-        resized_screen = cv2.resize(new_frame, self.shape[1:], interpolation = cv2.INTER_AREA)
+        new_frame = cv2.cvtColor(obs, cv2.COLOR_RGB2GRAY)                                       # convert to grayscale
+        resized_screen = cv2.resize(new_frame, self.shape[1:], interpolation = cv2.INTER_AREA)  # resize image
         new_obs = np.array(resized_screen, dtype = np.uint8).reshape(self.shape)
-        new_obs = new_obs / 255.0
+        new_obs = new_obs / 255.0                                                               # Rescaling
         
         return new_obs
     
 class StackFrames(gym.ObservationWrapper):
+    '''
+        Stacks the last four image son top of each other to feed into neural network. Paper does not say explicitly why
+        they do this. Could be to induce fluidity and reduce flickering.
+    '''
     def __init__(self, env, repeat):
         super(StackFrames, self).__init__(env)
         self.observation_space = gym.spaces.Box(
@@ -111,9 +119,12 @@ class StackFrames(gym.ObservationWrapper):
     
     def observation(self, observation):
         self.stack.append(observation)
-        return np.array(self.stack).reshape(self.observation_space.low.shape)
+        return np.array(self.stack).reshape(self.observation_space.low.shape)  # returns stacked images in form of np array
     
 def make_env(env_name, shape = (84,84,1), repeat = 4, clip_rewards = False, no_ops = 0, fire_first = False):
+    '''
+        Combines all mods we made during preprocessing. The params provided are identical to the paper
+    '''
     env = gym.make(env_name)
     env = RepeatActionAndMaxFrame(env, repeat, clip_rewards, no_ops, fire_first)
     env = PreprocessFrame(shape, env)
