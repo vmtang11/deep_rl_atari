@@ -5,6 +5,9 @@ import numpy as np
 import gym
 
 def plot_learning_curve(x, scores, epsilons, filename):
+    '''
+        A neat function to plot the training of the agent
+    '''
     fig = plt.figure()
     ax = fig.add_subplot(111, label="1")
     ax2 = fig.add_subplot(111, label="2", frame_on=False)
@@ -40,7 +43,7 @@ class RepeatActionAndMaxFrame(gym.Wrapper):
         self.repeat = repeat
         self.shape = env.observation_space.low.shape        # lower bounds of observation space. It is an array of 4 values and is the negative of the high.
         self.frame_buffer = np.zeros_like((2, self.shape))  # returns 2 arrays with zeros in the shape of 'shape'
-        self.clip_rewards = clip_rewards
+        self.clip_rewards = clip_rewards                    # clip takes the reward and makes it -1, 1, or 0 (no reward).
         self.no_ops = no_ops
         self.fire_first = fire_first
         
@@ -63,7 +66,7 @@ class RepeatActionAndMaxFrame(gym.Wrapper):
     
     def reset(self):
         obs = self.env.reset()
-        no_ops = np.random.randint(self.no_ops) + 1 if self.no_ops > 0 else 0
+        no_ops = np.random.randint(self.no_ops) + 1 if self.no_ops > 0 else 0  # nos of no_ops we wanna do. A random number b/w 1 and no_ops else 0
         for _ in range(no_ops):
             _, _, done, _ = self.env.step(0)
             if done:
