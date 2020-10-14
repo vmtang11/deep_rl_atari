@@ -44,8 +44,8 @@ class RepeatActionAndMaxFrame(gym.Wrapper):
         self.shape = env.observation_space.low.shape        # lower bounds of observation space. It is an array of 4 values and is the negative of the high.
         self.frame_buffer = np.zeros_like((2, self.shape))  # returns 2 arrays with zeros in the shape of 'shape'
         self.clip_rewards = clip_rewards                    # clip takes the reward and makes it -1, 1, or 0 (no reward).
-        self.no_ops = no_ops
-        self.fire_first = fire_first
+        self.no_ops = no_ops                                # number of operations we want to take
+        self.fire_first = fire_first                        # boolean if first action is fire 
         
     def step(self, action):
         t_reward = 0.0                           # total reward at each step
