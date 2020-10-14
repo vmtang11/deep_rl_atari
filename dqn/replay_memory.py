@@ -1,9 +1,13 @@
 import numpy as np
 
 class ReplayBuffer(object):
+    '''
+        Codes the concept of Experience Replay from the paper. Stores state, new state, action and reward for previous n steps. 32 experiences randomly sampled and the behavioral Q-network
+        learns via SGD. The experiences are picked according to uniform probability and are shuffled to eliminate correlation.
+    '''
     def __init__(self, max_size, input_shape, n_actions):
-        self.mem_size = max_size
-        self.mem_cntr = 0
+        self.mem_size = max_size  # user specified - paper uses a million or something but this require TB of RAM. 50,000 ~ 17 GB
+        self.mem_cntr = 0  # memory counter is added everytime a memory is stored
         self.state_memory = np.zeros((self.mem_size, *input_shape), dtype = np.float32)
         self.new_state_memory = np.zeros((self.mem_size, *input_shape), dtype = np.float32)
         self.action_memory = np.zeros(self.mem_size, dtype = np.int64)
@@ -26,7 +30,7 @@ class ReplayBuffer(object):
     def sample_buffer(self, batch_size):
         # position of last stored memory
         max_mem = min(self.mem_cntr, self.mem_size)
-        # uniformly sample memory, without repeats
+        # uniformly sample memory, without replacement
         batch = np.random.choice(max_mem, batch_size, replace = False)
         
         states = self.state_memory[batch]
