@@ -30,11 +30,16 @@ def plot_learning_curve(x, scores, epsilons, filename):
     plt.savefig(filename)
     
 class RepeatActionAndMaxFrame(gym.Wrapper):
-    def __init__(self, env = None, repeat = 4, clip_rewards = False, no_ops = 0, fire_first = False):
+    '''
+        This class repeats actions and returns the max of the latest 2 frames.
+        Action repeating is don as it is cheaper to repeat actions and continue playing the game rather than have the agent choose a new action
+        Maxing the last two frames is necessary as certain objects only occur in even/odd frames
+    '''
+    def __init__(self, env = None, repeat = 4, clip_rewards = False, no_ops = 0, fire_first = False):  # paper repeats agents actions for 4 steps. Repeating action and playing game cheaper than choosing action
         super(RepeatActionAndMaxFrame, self).__init__(env)
         self.repeat = repeat
-        self.shape = env.observation_space.low.shape
-        self.frame_buffer = np.zeros_like((2, self.shape))
+        self.shape = env.observation_space.low.shape        # lower bounds of observation space. It is an array of 4 values and is the negative of the high.
+        self.frame_buffer = np.zeros_like((2, self.shape))  # returns 2 arrays with zeros in the shape of 'shape'
         self.clip_rewards = clip_rewards
         self.no_ops = no_ops
         self.fire_first = fire_first
@@ -47,13 +52,12 @@ class RepeatActionAndMaxFrame(gym.Wrapper):
             if self.clip_rewards:
                 reward = np.clip(np.array([reward]), -1, 1)[0]
             t_reward += reward
-            idx = i % 2
+            idx = i % 2                          # idx is 0 or 1 for repeat in [0, 1, 2, 3]
             self.frame_buffer[idx] = obs         # save current frame in buffer in even or odd position
             if done:
                 break
-        
-        # find max of 2 frames in frame buffer
-        max_frame = np.maximum(self.frame_buffer[0], self.frame_buffer[1])
+
+        max_frame = np.maximum(self.frame_buffer[0], self.frame_buffer[1])  # find max of 2 frames in frame buffer. This is to avoid flickering as some objects only appear in even/odd frames
         
         return max_frame, t_reward, done, info
     
