@@ -4,9 +4,27 @@ from deep_q_network import DeepQNetwork
 from replay_memory import ReplayBuffer
 
 class DQNAgent(object):
+    '''
+    Creates the Deep Q Network Agent.
+    '''
     def __init__(self, gamma, epsilon, lr, n_actions, input_dims, mem_size, batch_size, 
                  eps_min = .01, eps_dec = 5e-7, replace = 1000, algo = None, 
-                 env_name = None, chkpt_dir = 'tmp/dqn'):  # replace refers to the number of steps after which the target network weights are flipped with that of the behavioral network
+                 env_name = None, chkpt_dir = 'tmp/dqn'):  
+        '''
+        INPUT: gamma: discount factor for the action value function 
+               epsilon: probability for exploitation
+               lr: learning rate of optimizer
+               n_actions: number of actions possible
+               input_dims: size of input
+               mem_size: size of memory
+               batch_size: size of batch for GD
+               eps_min: minimum possible value for epsilon
+               eps_dec: amount to decrement epsilon by
+               replace: number of steps after which the target network weights are flipped with that of the behavioral network
+               algo: name of algorithm
+               env_name: name of environment
+               chkpt_dir: name of directory to store checkpoints
+        '''
         self.gamma = gamma
         self.epsilon = epsilon
         self.lr = lr
@@ -37,26 +55,43 @@ class DQNAgent(object):
         
     def choose_action(self, observation):
         '''
-            epsilon greedy
+        Selects actions based on epsilon greedy method.
+        
+        INPUT: observation: current state 
+        OUTPUT: action: action to take (max action if exploit, random action if explore)
         '''
         if np.random.random() > self.epsilon:
+            # exploit
             state = T.tensor([observation], dtype = T.float).to(self.q_eval.device)
             actions = self.q_eval.forward(state)
             action = T.argmax(actions).item()
         else:
+            # explore
             action = np.random.choice(self.action_space)
         
         return action
     
     def store_transition(self, state, action, reward, state_, done):
         '''
-            Calls the store_transition() from replay_memory.py
+        Stores memories for current state, action taken, reward received, next state, and done flag. (replay_memory.py).
+        
+        INPUT: state: current state
+               action: action taken
+               reward: reward received
+               state_: next state
+               done: done flag
         '''
         self.memory.store_transition(state, action, reward, state_, done)
         
     def sample_memory(self):
         '''
-            Sample from history
+        Samples memories from stored memories.
+        
+        OUTPUT: states: memory of states
+                actions: memory of actions taken
+                rewards: memory of rewards received
+                states_: memory of next states
+                dones: memory of done flags
         '''
         state, action, reward, new_state, done = self.memory.sample_buffer(self.batch_size)
         
@@ -70,14 +105,14 @@ class DQNAgent(object):
     
     def replace_target_network(self):
         '''
-            Swap weight of the target network with the behavioral network (set them as equal)
+        Swap weight of the target network with the behavioral network (set them as equal).
         '''
         if self.learn_step_counter % self.replace_target_cnt == 0:
             self.q_next.load_state_dict(self.q_eval.state_dict())
             
     def decrement_epsilon(self):
         '''
-            Linear epsilon decrement
+        Linearly decrement epsilon to eps_min.
         '''
         if self.epsilon > self.eps_min:
             self.epsilon = self.epsilon - self.eps_dec 
@@ -94,8 +129,16 @@ class DQNAgent(object):
         
     def learn(self):
         '''
-            We only wait for a single batch of 32 to fill up to start learning. We could wait for the entire replay_memory to
-            fill uop before we start learning but this can be time consuming
+        Formulates the DQN Agent's learning process. First, it only learns once the batch size is full (has 32 stored memories) to help save time rather than waiting for the entire 
+        ReplayBuffer to fill. Once the batch size is full:
+            1. Zero optimizer gradients and replace target network (if necessary) 
+            2. Sample memories for states, actions, rewards, next states, and done flags
+            3. Forward propagate states (q_pred) to get actions taken
+            4. Forward propagate next states and find maximal action (q_next)
+            5. Reset done flags in q_next (next states) to 0 when in terminal state
+            6. Calculate target value (maximum possible action that could have been taken)
+            7. Calculate MSE loss: difference between possible max action and action taken
+            8. Backpropagate loss, step optimizer, increment step counter, and decrement epsilon
         '''
         if self.memory.mem_cntr < self.batch_size:  # check if batch is full
             return
@@ -116,8 +159,8 @@ class DQNAgent(object):
         q_target = rewards + self.gamma * q_next  # if not terminal, then calculate th immediate reward plus the discounted max q-values according to the greedy target q network
         
         loss = self.q_eval.loss(q_target, q_pred).to(self.q_eval.device)  # MSE loss function as defined in the paper.
+        
         loss.backward()  # back propagate
         self.q_eval.optimizer.step()  # optimizer
         self.learn_step_counter += 1
-        
         self.decrement_epsilon()  # decrement epsilon
