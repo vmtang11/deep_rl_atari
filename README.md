@@ -21,3 +21,11 @@ These two ideas of experience replay and periodic Q updates help make this imple
 ## Results on Pong
 
 The deep Q-network (DQN) agent was then trained on Pong, which requires less computation power than other games. Pong is a 2-player, table-tennis-like game, each controlling one paddle that can move up and down. The objective is to move the paddle to bounce the ball back to the opponent. A point is earned if the opponent fails to return the ball. 
+
+### Agent Playing Pong in Early Training Stages
+
+![](videos/pong_early.gif)
+
+### Final Trained Agent Playing Pong
+
+![](videos/pong_end.gif)
