@@ -47,3 +47,11 @@ To train the DQN Agent using this repository, clone the repository then run the 
 Within the `dqn_pytorch` directory, run:
 
 `python main_dqn.py`
+
+Necessary libraries:
+- `torch`
+- `numpy`
+- `gym`
+- `cv2`
+- `matplotlib`
+- `collections`
