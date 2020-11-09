@@ -22,7 +22,7 @@ These two ideas of experience replay and periodic Q updates help make this imple
 
 The deep Q-network (DQN) agent was then trained on Pong, which requires less computation power than other games. Pong is a 2-player, table-tennis-like game, each controlling one paddle that can move up and down. The objective is to move the paddle to bounce the ball back to the opponent. A point is earned if the opponent fails to return the ball. 
 
-The plot below shows the training results on Pong using this PyTorch implementation. The blue indicates the epsilon value and the orange indicates the score. We can see that this methods plateaus around a score of about 15 out of a maximum of 21 points. Note that this is slightly lower than paper results due to differences in computational power during the training process.
+The plot below shows the training results on Pong using this PyTorch implementation. The blue indicates the epsilon value and the orange indicates the score. We can see that this methods plateaus around a score of about 15 out of a maximum of 21 points. Note that this is slightly lower than paper results which achieve a final score of 18 due to differences in computational power during the training process.
 
 ![](dqn_pytorch/plots/DQNAgent_PongNoFrameskip-v4_lr0.0001__500games.png)
 
