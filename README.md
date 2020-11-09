@@ -28,8 +28,12 @@ The plot below shows the training results on Pong using this PyTorch implementat
 
 ### Agent Playing Pong in Early Training Stages
 
+The video below shows the agent (green) playing Pong in the early stages of training. We can see that the agent performs poorly, failing to return the ball. Furthermore, we can see that the rewards and Q-values are both relatively low. 
+
 ![](videos/pong_early.gif)
 
 ### Agent Playing Pong in Later Training Stages
+
+As the agent trains more, we can see that its performance improves significantly. The agent (green) can now not only return the ball but also return it in a way that makes it difficult for the opponent to return the ball, leading to the agent winning the game. Likewise, we can see that in comparison to early stage performance, the reward and Q-values are consistently higher now that the agent has trained more. 
 
 ![](videos/pong_end.gif)
