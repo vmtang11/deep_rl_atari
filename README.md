@@ -17,3 +17,7 @@ Experience replay stores the state, action, and reward for a certain time step t
 The second important feature is the periodic updates to Q which reduce correlations with the target. Weights from the main neural network are copied over and used to update the target network periodically. 
 
 These two ideas of experience replay and periodic Q updates help make this implementation more stable because the same network is used to choose an action and to estimate the value of that action. In summary, first, experience replay helps solve the problem of correlations in sequences of observations by uniformly sampling from stored experiences. Second, periodic Q updates help solve the issue of correlations between the action values Q and the target values by periodically copying main network weights to update the target network.
+
+## Results on Pong
+
+The deep Q-network (DQN) agent was then trained on Pong, which requires less computation power than other games. Pong is a 2-player, table-tennis-like game, each controlling one paddle that can move up and down. The objective is to move the paddle to bounce the ball back to the opponent. A point is earned if the opponent fails to return the ball. 
