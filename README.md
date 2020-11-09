@@ -37,3 +37,13 @@ The video below shows the agent (green) playing Pong in the early stages of trai
 As the agent trains more, we can see that its performance improves significantly. The agent (green) can now not only return the ball but also return it in a way that makes it difficult for the opponent to return the ball, leading to the agent winning the game. Likewise, we can see that in comparison to early stage performance, the reward and Q-values are consistently higher now that the agent has trained more. 
 
 ![](videos/pong_end.gif)
+
+## Train it Yourself!
+
+To train the DQN Agent using this repository, clone the repository then run the `main_dqn.py` file in `dqn_pytorch`. (Note: This takes several hours to run)
+
+`git clone https://github.com/vmtang11/deep_rl_atari.git`
+
+Within the `dqn_pytorch` directory, run:
+
+`python main_dqn.py`
