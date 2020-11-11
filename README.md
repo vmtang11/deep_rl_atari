@@ -4,6 +4,8 @@
 
 The purpose of this repository is to emulate the results of Mnih _et al._'s paper _Human level control through deep reinforcement learning_. This paper uses deep q-learning to train an agent to play Atari games and achieve results similar to human performance. This paper is significant because the deep q-network only intakes the game pixels and no other context or game information. Furthermore, the exact same parameters and architecture are used when training for a variety of Atari games, showing the flexibility and robustness of this artificial agent in learning and succeeding in a variety of challenging tasks. The results of this paper are similar to human performance and outperform all previous algorithms. 
 
+Note: If you'd like a brief introduction to Q-learning and deep Q-learning, please visit [this page](https://github.com/vmtang11/deep_rl_atari/wiki/Q-Learning).
+
 ## Repository Implementation
 
 This implementation method is based on Phil Tabor's Udemy course, [Modern Reinforcement Learning: Deep Q Learning in PyTorch](https://www.udemy.com/course/deep-q-learning-from-paper-to-code/), where he implements Mnih _et al._'s paper in the section Deep Q Learning Paper to Code. The results of this paper are achieved after training for weeks with higher powered computational resources than accessible to most people. To make training easier, this implementation based on Phil Tabor's Udemy course alters a few parameters to decrease computation expense, namely decreasing the agent's memory size. Two other important features of this paper are the ideas of experience replay and the periodic update of Q. These features are key to the high performance of this artificial agent.
